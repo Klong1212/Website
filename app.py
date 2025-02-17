@@ -39,10 +39,9 @@ def signin():
             return redirect(url_for('signin'))
 
         # 🔹 เข้ารหัสรหัสผ่านก่อนเก็บในฐานข้อมูล
-        hashed_password = generate_password_hash(password, method='sha256')
 
         # 🔹 สร้างผู้ใช้ใหม่ในฐานข้อมูล
-        new_user = User(username=username, password=hashed_password)
+        new_user = User(username=username, password=password)
         db.session.add(new_user)  # เพิ่มข้อมูลไปที่ฐานข้อมูล
         db.session.commit()  # บันทึกข้อมูลลงฐานข้อมูลจริงๆ
 
@@ -59,13 +58,15 @@ def login():
         # 🔹 ค้นหาผู้ใช้จากฐานข้อมูล
         user = User.query.filter_by(username=username).first()
 
-        if user and check_password_hash(user.password, password):  
+        if user and user.password == password:  
             login_user(user)  # ทำให้ผู้ใช้ล็อกอิน
-            return redirect(url_for('dashboard'))  # พาไปหน้า dashboard
+            return redirect(url_for('home'))  # พาไปหน้า home
         else:
             flash('Invalid username or password', 'danger')  # แจ้งเตือนถ้าผิด
 
     return render_template('login.html')  # แสดงหน้า login
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(host='0.0.0.0', debug=True,use_reloader=True)
