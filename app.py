@@ -254,6 +254,14 @@ def logout():
     logout_user()
     flash('Logged out successfully!', 'success')
     return redirect(url_for('home'))
+@app.route('/favorite')
+def favorite():
+    song_likes = db.session.query(Song, db.func.count(Like.id).label('like_count')) \
+        .join(Like, Song.id == Like.song_id, isouter=True) \
+        .group_by(Song.id) \
+        .order_by(db.desc('like_count')) \
+        .all()
+    return render_template('favorite.html', song_likes=song_likes)
 
 @app.route('/like')
 @login_required
