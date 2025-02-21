@@ -26,7 +26,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150), nullable=False)
     songs = db.relationship('Song', backref='user', lazy=True)
     likes = db.relationship('Like', backref='user', lazy=True)
-
+    
 class Song(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
