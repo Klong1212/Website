@@ -49,18 +49,24 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <button class="btn btn-play" data-audio="{{ song.audio_url }}">
                                 <i class="fas fa-play"></i>
-                            </button>
-                            <a href="{{ song.lyrics_url }}" target="_blank" class="btn btn-link">Lyrics</a>
-                            {% if current_user.is_authenticated %}
-                            <button class="btn btn-like {% if song.id in liked_songs %}liked{% endif %}" 
-                                    data-song-id="{{ song.id }}">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
+                                <button class="btn btn-link" data-bs-toggle="modal" data-bs-target="#lyricsModal{{ song.id }}">
+                                    Lyrics
+                                </button>
+                                
+                                <!-- Modal -->
+                                <div class="modal fade" id="lyricsModal{{ song.id }}" tabindex="-1" aria-labelledby="lyricsModalLabel{{ song.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="lyricsModalLabel{{ song.id }}">{{ song.title }} - Lyrics</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <pre>{{ song.lyrics_url }}</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
             {% endfor %}
         </div>
     </div>
