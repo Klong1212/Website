@@ -7,6 +7,10 @@ from datetime import datetime
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'thisisasecretkey'
+app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # จำกัดขนาดไฟล์ที่ 16MB
+ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_AUDIO_EXTENSIONS = {'mp3', 'wav'}
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
