@@ -105,3 +105,25 @@
                 }
             });
         });
+
+        // Like functionality
+        document.querySelectorAll('.btn-like').forEach(button => {
+            button.addEventListener('click', function() {
+                const songId = this.dataset.songId;
+                fetch(`/like/${songId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'liked') {
+                        this.classList.add('liked');
+                    } else {
+                        this.classList.remove('liked');
+                    }
+                });
+            });
+        });
+    </script>
