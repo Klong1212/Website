@@ -90,6 +90,35 @@ def toggle_like(song_id):
         db.session.add(new_like)
         db.session.commit()
         return jsonify({'status': 'liked'})
+
+
+
+@app.route('/signin', methods=['GET', 'POST'])
+def signin():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        if User.query.filter_by(username=username).first():
+            flash('Username already exists', 'error')
+            return redirect(url_for('signin'))
+            
+        hashed_password = generate_password_hash(password)
+        new_user = User(username=username, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+        
+        flash('Account created successfully!', 'success')
+        return redirect(url_for('login'))
+        
+    return render_template('signin.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('Logged out successfully!', 'success')
+    return redirect(url_for('home'))
 @app.route('/logout')
 @login_required
 def logout():
