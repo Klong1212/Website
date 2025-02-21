@@ -90,6 +90,12 @@ def toggle_like(song_id):
         db.session.add(new_like)
         db.session.commit()
         return jsonify({'status': 'liked'})
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('Logged out successfully!', 'success')
+    return redirect(url_for('home'))
 
 @app.route('/like')
 @login_required
