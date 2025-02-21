@@ -33,3 +33,31 @@
           {% endif %}
       </div>
   </header>
+
+  <h1 class="text-center mb-4">Your Liked Songs</h1>
+
+        {% if songs %}
+            <div class="row row-cols-1 row-cols-md-4 g-4">
+                {% for song in songs %}
+                <div class="col">
+                    <div class="card h-100">
+                        <img src="{{ song.image_url }}" class="card-img-top" alt="{{ song.title }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ song.title }}</h5>
+                            <p class="card-text">{{ song.artist }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button class="btn btn-play" data-audio="{{ song.audio_url }}">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <a href="{{ song.lyrics_url }}" target="_blank" class="btn btn-link">Lyrics</a>
+                                <button class="btn btn-like liked" data-song-id="{{ song.id }}">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+
