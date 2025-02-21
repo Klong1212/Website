@@ -3,7 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-
+import os
+from werkzeug.utils import secure_filename
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'thisisasecretkey'
@@ -32,7 +33,7 @@ class Song(db.Model):
     artist = db.Column(db.String(200), nullable=False)
     image_url = db.Column(db.String(500), nullable=False)
     audio_url = db.Column(db.String(500), nullable=False)
-    lyrics_url = db.Column(db.String(500), nullable=False)
+    lyrics_url = db.Column(db.Text, nullable=False)  # เปลี่ยนเป็น Text เพื่อเก็บเนื้อเพลง
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     likes = db.relationship('Like', backref='song', lazy=True)
