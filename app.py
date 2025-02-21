@@ -57,6 +57,29 @@ def home():
         liked_songs = []
     return render_template('home.html', songs=songs, liked_songs=liked_songs)
 
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        profile_image = request.files.get('profile_image')
+
+        if username:
+            current_user.username = username
+
+        if profile_image and allowed_file(profile_image.filename, ALLOWED_IMAGE_EXTENSIONS):
+            profile_image_filename = secure_filename(profile_image.filename)
+            profile_image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'profile_images', profile_image_filename)
+            os.makedirs(os.path.dirname(profile_image_path), exist_ok=True)
+            profile_image.save(profile_image_path)
+            current_user.profile_image_url = url_for('static', filename=f'uploads/profile_images/{profile_image_filename}')
+
+        db.session.commit()
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('profile'))
+
+    return render_template('profile.html')
+
 @app.route('/add', methods=['GET', 'POST'])
 @login_required
 def add():
