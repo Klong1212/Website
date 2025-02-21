@@ -32,3 +32,30 @@
               {% endif %}
           </div>
       </header>
+      
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center">Add New Song</h2>
+                </div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Song Title</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="artist" class="form-label">Artist</label>
+                            <input type="text" class="form-control" id="artist" name="artist" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="image_url" class="form-label">Image URL
