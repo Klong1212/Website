@@ -80,3 +80,28 @@
                 }
             });
         });
+
+        // Audio player functionality
+        let currentAudio = null;
+        let currentButton = null;
+
+        document.querySelectorAll('.btn-play').forEach(button => {
+            button.addEventListener('click', function() {
+                const audioUrl = this.dataset.audio;
+                
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentButton.innerHTML = '<i class="fas fa-play"></i>';
+                }
+
+                if (currentAudio && currentButton === this) {
+                    currentAudio = null;
+                    currentButton = null;
+                } else {
+                    currentAudio = new Audio(audioUrl);
+                    currentAudio.play();
+                    currentButton = this;
+                    this.innerHTML = '<i class="fas fa-pause"></i>';
+                }
+            });
+        });
