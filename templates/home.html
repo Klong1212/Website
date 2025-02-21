@@ -21,12 +21,21 @@
                 <li><a href="/" class="nav-link px-2 link-secondary">Home</a></li>
                 <li><a href="/like" class="nav-link px-2">Liked Songs</a></li>
                 <li><a href="/add" class="nav-link px-2">Add Song</a></li>
+                {% if current_user.is_authenticated %}
+                <li><a href="/profile" class="nav-link px-2">Profile</a></li>
+                {% if current_user.is_admin %}
+                <li><a href="/admin" class="nav-link px-2">Admin</a></li>
+                {% endif %}
+                {% endif %}
             </ul>
 
             <div class="col-md-3 text-end">
                 {% if current_user.is_authenticated %}
-                    <span class="me-3">{{ current_user.username }}</span>
-                    <a href="/logout" class="btn btn-outline-primary">Logout</a>
+                    <div class="d-flex align-items-center justify-content-end">
+                        <img src="{{ current_user.profile_pic }}" class="rounded-circle me-2" width="32" height="32" alt="Profile">
+                        <span class="me-3">{{ current_user.name }}</span>
+                        <a href="/logout" class="btn btn-outline-primary">Logout</a>
+                    </div>
                 {% else %}
                     <a href="/login" class="btn btn-outline-primary me-2">Login</a>
                     <a href="/signin" class="btn btn-primary">Sign-up</a>
@@ -45,6 +54,10 @@
                 <div class="card h-100">
                     <img src="{{ song.image_url }}" class="card-img-top" alt="{{ song.title }}">
                     <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <img src="{{ song.user.profile_pic }}" class="rounded-circle me-2" width="30" height="30" alt="Profile Picture">
+                            <small class="text-muted">{{ song.user.name }}</small>
+                        </div>
                         <div class="progress mt-2">
                             <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
@@ -54,22 +67,7 @@
                             <button class="btn btn-play" data-audio="{{ song.audio_url }}">
                                 <i class="fas fa-play"></i>
                             </button>
-                            <button class="btn btn-link" data-bs-toggle="modal" data-bs-target="#lyricsModal{{ song.id }}">
-                                Lyrics
-                            </button>
-                            <div class="modal fade" id="lyricsModal{{ song.id }}" tabindex="-1" aria-labelledby="lyricsModalLabel{{ song.id }}" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="lyricsModalLabel{{ song.id }}">{{ song.title }} - Lyrics</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <pre>{{ song.lyrics_url }}</pre>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    
                             {% if current_user.is_authenticated %}
                             <button class="btn btn-like {% if song.id in liked_songs %}liked{% endif %}" 
                                     data-song-id="{{ song.id }}">
@@ -81,7 +79,6 @@
                 </div>
             </div>
             {% endfor %}
-            
         </div>
     </div>
 
@@ -106,36 +103,33 @@
         let currentButton = null;
 
         document.querySelectorAll('.btn-play').forEach(button => {
-    button.addEventListener('click', function() {
-        
-        const audioUrl = this.dataset.audio;
-        
-        if (currentAudio) {
-            currentAudio.pause();
-            currentButton.innerHTML = '<i class="fas fa-play"></i>';
-        }
+            button.addEventListener('click', function() {
+                const audioUrl = this.dataset.audio;
+                
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentButton.innerHTML = '<i class="fas fa-play"></i>';
+                }
 
-        if (currentAudio && currentButton === this) {
-            currentAudio = null;
-            currentButton = null;
-        } else {
-            currentAudio = new Audio(audioUrl);
-            currentAudio.play();
-            currentButton = this;
-            this.innerHTML = '<i class="fas fa-pause"></i>';
-            
-            // ✅ เพิ่ม Event Listener สำหรับแสดง Progress Bar
-            currentAudio.addEventListener('timeupdate', function() {
-                const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
-                const progressBar = currentButton.closest('.card').querySelector('.progress-bar');
-                if (progressBar) {
-                    progressBar.style.width = `${progress}%`;
+                if (currentAudio && currentButton === this) {
+                    currentAudio = null;
+                    currentButton = null;
+                } else {
+                    currentAudio = new Audio(audioUrl);
+                    currentAudio.play();
+                    currentButton = this;
+                    this.innerHTML = '<i class="fas fa-pause"></i>';
+                    
+                    currentAudio.addEventListener('timeupdate', function() {
+                        const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
+                        const progressBar = currentButton.closest('.card').querySelector('.progress-bar');
+                        if (progressBar) {
+                            progressBar.style.width = `${progress}%`;
+                        }
+                    });
                 }
             });
-        }
-    });
-});
-
+        });
 
         // Like functionality
         document.querySelectorAll('.btn-like').forEach(button => {

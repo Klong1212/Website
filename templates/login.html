@@ -157,6 +157,7 @@
 
   
 <main class="form-signin w-100 m-auto">
+  <a href="/signin" class="btn btn-primary w-100 py-2" >sign in if u dont have account</a>
 <form action="{{ url_for('login') }}" method="POST">
   <h1 class="h3 mb-3 fw-normal">Please log in</h1>
   <div class="form-floating">
@@ -167,7 +168,7 @@
     <input type="password" class="form-control" id="floatingPassword" name='password' placeholder="Password">
     <label for="floatingPassword">Password</label>
   </div>
-  <button class="btn btn-primary w-100 py-2" type="submit">Sign in</button>
+  <button class="btn btn-primary w-100 py-2" type="submit">log in</button>
 </form>
 </main>
 <script src="/static/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
