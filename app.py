@@ -62,17 +62,50 @@ def add():
     if request.method == 'POST':
         title = request.form.get('title')
         artist = request.form.get('artist')
-        image_url = request.form.get('image_url')
-        audio_url = request.form.get('audio_url')
-        lyrics_url = request.form.get('lyrics_url')
+        lyrics = request.form.get('lyrics')
         
-        if title and artist and image_url and audio_url and lyrics_url:
+        # ตรวจสอบว่ามีไฟล์ถูกส่งมาไหม
+        if 'image' not in request.files or 'audio' not in request.files:
+            flash('No file uploaded', 'danger')
+            return redirect(request.url)
+            
+        image_file = request.files['image']
+        audio_file = request.files['audio']
+        
+        # ตรวจสอบว่าเลือกไฟล์หรือไม่
+        if image_file.filename == '' or audio_file.filename == '':
+            flash('No selected file', 'danger')
+            return redirect(request.url)
+            
+        if image_file and allowed_file(image_file.filename, ALLOWED_IMAGE_EXTENSIONS):
+            # บันทึกไฟล์รูปภาพ
+            image_filename = secure_filename(image_file.filename)
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'images', image_filename)
+            os.makedirs(os.path.dirname(image_path), exist_ok=True)
+            image_file.save(image_path)
+            image_url = url_for('static', filename=f'uploads/images/{image_filename}')
+        else:
+            flash('Invalid image file type', 'danger')
+            return redirect(request.url)
+            
+        if audio_file and allowed_file(audio_file.filename, ALLOWED_AUDIO_EXTENSIONS):
+            # บันทึกไฟล์เสียง
+            audio_filename = secure_filename(audio_file.filename)
+            audio_path = os.path.join(app.config['UPLOAD_FOLDER'], 'audio', audio_filename)
+            os.makedirs(os.path.dirname(audio_path), exist_ok=True)
+            audio_file.save(audio_path)
+            audio_url = url_for('static', filename=f'uploads/audio/{audio_filename}')
+        else:
+            flash('Invalid audio file type', 'danger')
+            return redirect(request.url)
+
+        if title and artist and lyrics and image_url and audio_url:
             new_song = Song(
                 title=title,
                 artist=artist,
                 image_url=image_url,
                 audio_url=audio_url,
-                lyrics_url=lyrics_url,
+                lyrics_url=lyrics,  # เก็บเนื้อเพลงโดยตรงในฐานข้อมูล
                 user_id=current_user.id
             )
             db.session.add(new_song)
