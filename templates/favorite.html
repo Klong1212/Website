@@ -69,6 +69,24 @@
                             <button class="btn btn-play" data-audio="{{ song.audio_url }}">
                                 <i class="fas fa-play"></i> <!-- ปุ่มเล่นเพลง -->
                             </button>
+                            <button class="btn btn-link" data-bs-toggle="modal" data-bs-target="#lyricsModal{{ song.id }}">
+                                Lyrics
+                            </button>
+                            
+                            <!-- ตัวนำเนื้อเพลงขึ้นจอเมื่อกด Lyrics -->
+                            <div class="modal fade" id="lyricsModal{{ song.id }}" tabindex="-1" aria-labelledby="lyricsModalLabel{{ song.id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="lyricsModalLabel{{ song.id }}">{{ song.title }} - Lyrics</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <pre>{{ song.lyrics_url }}</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <span class="text-muted">
                                 <i class="fas fa-heart"></i> {{ like_count }} <!-- จำนวนครั้งที่ถูกใจ -->
                             </span>
