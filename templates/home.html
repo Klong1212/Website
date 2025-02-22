@@ -4,12 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Klong.com - Music Search</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> <!-- เชื่อมโยงกับ Bootstrap -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> <!-- เชื่อมโยง Font Awesome -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> <!-- สไตล์เฉพาะที่ใช้ในโปรเจค -->
 </head>
 <body>
     <div class="container">
+        <!-- ส่วนของ Header -->
         <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
             <div class="col-md-3 mb-2 mb-md-0">
                 <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
@@ -17,6 +18,7 @@
                 </a>
             </div>
 
+            <!-- เมนูนำทาง -->
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="/" class="nav-link px-2 link-secondary">Home</a></li>
                 <li><a href="/favorite" class="nav-link px-2">Favorite Songs</a></li>
@@ -31,6 +33,7 @@
                 {% endif %}
             </ul>
 
+            <!-- ส่วนของการจัดการโปรไฟล์ผู้ใช้ -->
             <div class="col-md-3 text-end">
                 {% if current_user.is_authenticated %}
                     <div class="d-flex align-items-center justify-content-end">
@@ -44,36 +47,37 @@
                 {% endif %}
             </div>
         </header>
-        
 
+        <!-- ส่วนของการค้นหาเพลง -->
         <div class="search-container mb-4">
-            <input type="text" id="searchInput" class="form-control w-50 mx-auto" placeholder="Search songs...">
+            <input type="text" id="searchInput" class="form-control w-50 mx-auto" placeholder="Search songs..."> <!-- ช่องกรอกคำค้นหา -->
         </div>
-        
+
+        <!-- แสดงผลเพลงที่ค้นหา -->
         <div class="row row-cols-1 row-cols-md-4 g-4" id="songsList">
             {% for song in songs %}
             <div class="col song-item">
                 <div class="card h-100">
-                    <img src="{{ song.image_url }}" class="card-img-top" alt="{{ song.title }}">
+                    <img src="{{ song.image_url }}" class="card-img-top" alt="{{ song.title }}"> <!-- รูปภาพของเพลง -->
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-2">
-                            <img src="{{ song.user.profile_pic }}" class="rounded-circle me-2" width="30" height="30" alt="Profile Picture">
+                            <img src="{{ song.user.profile_pic }}" class="rounded-circle me-2" width="30" height="30" alt="Profile Picture"> <!-- รูปโปรไฟล์ของผู้โพสต์เพลง -->
                             <small class="text-muted">{{ song.user.name }}</small>
                         </div>
                         <div class="progress mt-2">
                             <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                        <h5 class="card-title">{{ song.title }}</h5>
-                        <p class="card-text">{{ song.artist }}</p>
+                        <h5 class="card-title">{{ song.title }}</h5> <!-- ชื่อเพลง -->
+                        <p class="card-text">{{ song.artist }}</p> <!-- ศิลปิน -->
                         <div class="d-flex justify-content-between align-items-center">
                             <button class="btn btn-play" data-audio="{{ song.audio_url }}">
-                                <i class="fas fa-play"></i>
+                                <i class="fas fa-play"></i> <!-- ปุ่มเล่นเพลง -->
                             </button>
                     
                             {% if current_user.is_authenticated %}
                             <button class="btn btn-like {% if song.id in liked_songs %}liked{% endif %}" 
                                     data-song-id="{{ song.id }}">
-                                <i class="fas fa-heart"></i>
+                                <i class="fas fa-heart"></i> <!-- ปุ่มถูกใจเพลง -->
                             </button>
                             {% endif %}
                         </div>
@@ -84,23 +88,24 @@
         </div>
     </div>
 
+    <!-- การเชื่อมโยงกับ Bootstrap JS และฟังก์ชันต่างๆ -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Search functionality
+        // ฟังก์ชันการค้นหาเพลง
         document.getElementById('searchInput').addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();
             document.querySelectorAll('.song-item').forEach(item => {
                 const title = item.querySelector('.card-title').textContent.toLowerCase();
                 const artist = item.querySelector('.card-text').textContent.toLowerCase();
                 if (title.includes(searchTerm) || artist.includes(searchTerm)) {
-                    item.style.display = '';
+                    item.style.display = ''; // แสดงเพลงที่ตรงกับคำค้นหา
                 } else {
-                    item.style.display = 'none';
+                    item.style.display = 'none'; // ซ่อนเพลงที่ไม่ตรงกับคำค้นหา
                 }
             });
         });
 
-        // Audio player functionality
+        // ฟังก์ชันเล่นเพลง
         let currentAudio = null;
         let currentButton = null;
 
@@ -133,7 +138,7 @@
             });
         });
 
-        // Like functionality
+        // ฟังก์ชันการถูกใจเพลง
         document.querySelectorAll('.btn-like').forEach(button => {
             button.addEventListener('click', function() {
                 const songId = this.dataset.songId;
@@ -146,15 +151,16 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'liked') {
-                        this.classList.add('liked');
+                        this.classList.add('liked'); // เปลี่ยนสไตล์เมื่อเพลงถูกใจ
                     } else {
-                        this.classList.remove('liked');
+                        this.classList.remove('liked'); // ลบสไตล์เมื่อไม่ถูกใจ
                     }
                 });
             });
         });
     </script>
 
+    <!-- สไตล์เพิ่มเติม -->
     <style>
         .btn-like {
             border: none;
@@ -162,7 +168,7 @@
             color: #ccc;
         }
         .btn-like.liked {
-            color: #ff69b4;
+            color: #ff69b4; /* สีชมพูเมื่อถูกใจ */
         }
         .search-container {
             margin-top: 20px;

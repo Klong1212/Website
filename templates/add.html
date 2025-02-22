@@ -1,27 +1,29 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Add Song - Klong.com</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta charset="utf-8"> <!-- กำหนดการเข้ารหัสของหน้าเว็บ -->
+    <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- ทำให้เว็บแสดงผลได้ดีบนอุปกรณ์ต่างๆ -->
+    <title>Add Song - Klong.com</title> <!-- ชื่อของหน้าเว็บ -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> <!-- เชื่อมโยงไฟล์ CSS ของ Bootstrap -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> <!-- เชื่อมโยงกับไฟล์ CSS ภายในโปรเจกต์ -->
 </head>
 <body>
-  <div class="container">
+  <div class="container"> <!-- ใช้ class container ของ Bootstrap สำหรับการจัดตำแหน่งเนื้อหา -->
       <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
           <div class="col-md-3 mb-2 mb-md-0">
               <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
-                  Klong.com
+                  Klong.com <!-- ชื่อเว็บไซต์ที่เชื่อมโยงไปที่หน้าแรก -->
               </a>
           </div>
 
           <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+            <!-- เมนูนำทาง -->
             <li><a href="/" class="nav-link px-2">Home</a></li>
             <li><a href="/favorite" class="nav-link px-2">Favorite Songs</a></li>
             <li><a href="/like" class="nav-link px-2">Liked Songs</a></li>
             <li><a href="/people" class="nav-link px-2">People</a></li>
             <li><a href="/add" class="nav-link px-2 link-secondary">Add Song</a></li>
+            <!-- ตรวจสอบว่าเป็นผู้ใช้ที่ล็อกอินหรือไม่ -->
             {% if current_user.is_authenticated %}
             <li><a href="/profile" class="nav-link px-2">Profile</a></li>
             {% if current_user.is_admin %}
@@ -31,6 +33,7 @@
         </ul>
 
           <div class="col-md-3 text-end">
+              <!-- ตรวจสอบสถานะผู้ใช้ว่าเข้าสู่ระบบหรือไม่ -->
               {% if current_user.is_authenticated %}
               <div class="d-flex align-items-center justify-content-end">
                 <img src="{{ current_user.profile_pic }}" class="rounded-circle me-2" width="32" height="32" alt="Profile">
@@ -44,48 +47,48 @@
           </div>
       </header>
       
-      <div class="row justify-content-center">
+      <div class="row justify-content-center"> <!-- จัดตำแหน่งฟอร์มในกลาง -->
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h2 class="text-center">Add New Song</h2>
+                    <h2 class="text-center">Add New Song</h2> <!-- หัวข้อของฟอร์ม -->
                 </div>
                 <div class="card-body">
-                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% with messages = get_flashed_messages(with_categories=true) %} <!-- ตรวจสอบข้อความแจ้งเตือนที่ได้รับจากฝั่งเซิร์ฟเวอร์ -->
                         {% if messages %}
                             {% for category, message in messages %}
-                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                                <div class="alert alert-{{ category }}">{{ message }}</div> <!-- แสดงข้อความแจ้งเตือน -->
                             {% endfor %}
                         {% endif %}
                     {% endwith %}
 
-                    <form method="POST" enctype="multipart/form-data">
+                    <form method="POST" enctype="multipart/form-data"> <!-- ฟอร์มการเพิ่มเพลงใหม่ -->
                       <div class="mb-3">
                           <label for="title" class="form-label">Song Title</label>
-                          <input type="text" class="form-control" id="title" name="title" required>
+                          <input type="text" class="form-control" id="title" name="title" required> <!-- ฟิลด์สำหรับกรอกชื่อเพลง -->
                       </div>
                       <div class="mb-3">
                           <label for="artist" class="form-label">Artist</label>
-                          <input type="text" class="form-control" id="artist" name="artist" required>
+                          <input type="text" class="form-control" id="artist" name="artist" required> <!-- ฟิลด์สำหรับกรอกชื่อศิลปิน -->
                       </div>
                       <div class="mb-3">
                           <label for="image" class="form-label">Image File</label>
-                          <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
-                          <small class="text-muted">Upload song cover image (JPG, PNG, GIF)</small>
+                          <input type="file" class="form-control" id="image" name="image" accept="image/*" required> <!-- ฟิลด์สำหรับอัปโหลดภาพ -->
+                          <small class="text-muted">Upload song cover image (JPG, PNG, GIF)</small> <!-- คำแนะนำเกี่ยวกับการอัปโหลดภาพ -->
                       </div>
                       <div class="mb-3">
                           <label for="audio" class="form-label">Audio File</label>
-                          <input type="file" class="form-control" id="audio" name="audio" accept="audio/*" required>
-                          <small class="text-muted">Upload song audio file (MP3, WAV)</small>
+                          <input type="file" class="form-control" id="audio" name="audio" accept="audio/*" required> <!-- ฟิลด์สำหรับอัปโหลดไฟล์เสียง -->
+                          <small class="text-muted">Upload song audio file (MP3, WAV)</small> <!-- คำแนะนำเกี่ยวกับการอัปโหลดไฟล์เสียง -->
                       </div>
                       <div class="mb-3">
                           <label for="lyrics" class="form-label">Lyrics</label>
-                          <textarea class="form-control" id="lyrics" name="lyrics" rows="5" required></textarea>
-                          <small class="text-muted">Enter song lyrics</small>
+                          <textarea class="form-control" id="lyrics" name="lyrics" rows="5" required></textarea> <!-- ฟิลด์สำหรับกรอกเนื้อเพลง -->
+                          <small class="text-muted">Enter song lyrics</small> <!-- คำแนะนำในการกรอกเนื้อเพลง -->
                       </div>
                       <div class="text-center">
-                          <button type="submit" class="btn btn-primary">Add Song</button>
-                          <a href="{{ url_for('home') }}" class="btn btn-secondary">Cancel</a>
+                          <button type="submit" class="btn btn-primary">Add Song</button> <!-- ปุ่มส่งข้อมูล -->
+                          <a href="{{ url_for('home') }}" class="btn btn-secondary">Cancel</a> <!-- ลิงก์กลับไปหน้าแรก -->
                       </div>
                   </form>
               </div>
@@ -93,6 +96,6 @@
       </div>
   </div>
 </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> <!-- เชื่อมโยงไฟล์ JavaScript ของ Bootstrap -->
 </body>
 </html>
