@@ -72,6 +72,42 @@ def admin_songs():
     songs = Song.query.all()
     return render_template('admin_songs.html', songs=songs)
 
+@app.route('/admin/delete-user/<int:user_id>', methods=['POST'])  # ปรับ path ให้ตรงกับที่เรียกใน JavaScript
+@login_required
+def delete_user(user_id):
+    if not current_user.is_admin:
+        return jsonify({"status": "error", "message": "Unauthorized action!"})
+
+    try:
+        user = User.query.get(user_id)
+        if user:
+            # ลบ songs ของ user
+            songs = Song.query.filter_by(user_id=user.id).all()
+            for song in songs:
+                # ลบไฟล์รูปภาพและเสียง
+                if os.path.exists(os.path.join(app.root_path, song.image_url.lstrip('/'))):
+                    os.remove(os.path.join(app.root_path, song.image_url.lstrip('/')))
+                if os.path.exists(os.path.join(app.root_path, song.audio_url.lstrip('/'))):
+                    os.remove(os.path.join(app.root_path, song.audio_url.lstrip('/')))
+
+            # ลบ likes
+            Like.query.filter_by(user_id=user.id).delete()
+            
+            # ลบ user's songs
+            Song.query.filter_by(user_id=user.id).delete()
+            
+            # ลบ user
+            db.session.delete(user)
+            db.session.commit()
+            
+            return jsonify({"status": "success", "message": "User deleted successfully!"})
+        else:
+            return jsonify({"status": "error", "message": "User not found!"})
+            
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": str(e)})
+
 @app.route('/admin/delete-song/<int:song_id>', methods=['POST'])
 @login_required
 def delete_song(song_id):
@@ -209,6 +245,7 @@ def admin():
     users = User.query.all()
     songs = Song.query.all()
     return render_template('admin.html', users=users, songs=songs)
+
 
 
 
