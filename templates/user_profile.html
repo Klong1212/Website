@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ user.name }} - Klong.com</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+            <!-- [Header code เหมือนกับใน people.html] -->
+        </header>
+
+        <div class="text-center mb-5">
+            <img src="{{ user.profile_pic }}" class="rounded-circle mb-3" width="150" height="150" alt="{{ user.name }}">
+            <h2>{{ user.name }}</h2>
+            <p class="text-muted">@{{ user.username }}</p>
+            <p>{{ songs|length }} songs uploaded</p>
+        </div>
+
+        <h3 class="mb-4">Uploaded Songs</h3>
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+            {% for song in songs %}
+            <div class="col">
+                <div class="card h-100">
+                    <img src="{{ song.image_url }}" class="card-img-top" alt="{{ song.title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ song.title }}</h5>
+                        <p class="card-text">{{ song.artist }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button class="btn btn-play" data-audio="{{ song.audio_url }}">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <small class="text-muted">{{ song.likes|length }} likes</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Audio player functionality
+        let currentAudio = null;
+        let currentButton = null;
+
+        document.querySelectorAll('.btn-play').forEach(button => {
+            button.addEventListener('click', function() {
+                const audioUrl = this.dataset.audio;
+                
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentButton.innerHTML = '<i class="fas fa-play"></i>';
+                }
+
+                if (currentAudio && currentButton === this) {
+                    currentAudio = null;
+                    currentButton = null;
+                } else {
+                    currentAudio = new Audio(audioUrl);
+                    currentAudio.play();
+                    currentButton = this;
+                    this.innerHTML = '<i class="fas fa-pause"></i>';
+                }
+            });
+        });
+    </script>
+
+    <style>
+        .btn-play {
+            border: none;
+            background: none;
+        }
+    </style>
+</body>
+</html>

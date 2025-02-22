@@ -300,6 +300,17 @@ def favorite():
         .all()
     return render_template('favorite.html', song_likes=song_likes)
 
+@app.route('/people')
+def people():
+    users = User.query.all()
+    return render_template('people.html', users=users)
+
+@app.route('/user/<int:user_id>')
+def user_profile(user_id):
+    user = User.query.get_or_404(user_id)
+    songs = Song.query.filter_by(user_id=user_id).order_by(Song.created_at.desc()).all()
+    return render_template('user_profile.html', user=user, songs=songs)
+
 @app.route('/like')
 @login_required
 def liked_songs():
